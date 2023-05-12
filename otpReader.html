@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Read Last SMS and Autofill OTP</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    #otpInput {
+      width: 200px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    #autofillButton {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <input type="text" id="otpInput" placeholder="Enter OTP">
+  <button id="autofillButton" onclick="autofillOTP()">Autofill OTP</button>
+
+  <script>
+    // Function to retrieve the last received SMS
+    function getLastSMS() {
+      if ('OTPCredential' in window) {
+        const filter = {
+          has: 'body',
+          messageType: 'sms'
+        };
+
+        navigator.credentials.get({
+          otp: filter
+        }).then((credential) => {
+          if (credential && credential.code) {
+            const otpInput = document.getElementById('otpInput');
+            otpInput.value = credential.code;
+            console.log('OTP:', credential.code);
+          } else {
+            console.log('No OTP found');
+          }
+        }).catch((error) => {
+          console.error('Error retrieving OTP:', error);
+        });
+      } else {
+        console.error('OTPCredential API not supported');
+      }
+    }
+
+    // Function to autofill OTP
+    function autofillOTP() {
+      getLastSMS();
+    }
+  </script>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+</html>
